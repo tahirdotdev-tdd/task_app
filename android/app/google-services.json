@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5174287315",
+    "project_id": "taskapp-5d917",
+    "storage_bucket": "taskapp-5d917.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5174287315:android:c96f991930f233e67aad26",
+        "android_client_info": {
+          "package_name": "com.tahirdotdev.taskApp.task_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEcrsls48UsB4g5JmfYbI3bzUc8paPpPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
