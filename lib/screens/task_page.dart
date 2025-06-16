@@ -27,13 +27,14 @@ class _TaskPageState extends State<TaskPage> {
       context: context,
       builder: (context) {
         return Dialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
-              // Avoid overflow
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,11 +44,22 @@ class _TaskPageState extends State<TaskPage> {
                   TextField(
                     controller: _taskController,
                     maxLines: 3,
+                    style: Theme.of(context).textTheme.bodyMedium,
                     decoration: InputDecoration(
                       labelText: "Task Details",
                       labelStyle: secHead(context),
-                      border: OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -55,17 +67,22 @@ class _TaskPageState extends State<TaskPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.black54,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       onPressed: () async {
                         final task = _taskController.text.trim();
                         if (task.isEmpty) return;
 
-                        await FirebaseFirestore.instance
-                            .collection('tasks')
-                            .add({
-                              'task': task,
-                              'isDone': false,
-                              'createdAt': Timestamp.now(),
-                            });
+                        await FirebaseFirestore.instance.collection('tasks').add({
+                          'task': task,
+                          'isDone': false,
+                          'createdAt': Timestamp.now(),
+                        });
 
                         Navigator.pop(context);
                       },
@@ -77,6 +94,7 @@ class _TaskPageState extends State<TaskPage> {
             ),
           ),
         );
+
       },
     );
   }
@@ -123,10 +141,11 @@ class _TaskPageState extends State<TaskPage> {
                   .orderBy('createdAt', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.hasError)
+                if (snapshot.hasError) {
                   return Center(
                     child: Text("Error loading tasks", style: secHead(context)),
                   );
+                }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
