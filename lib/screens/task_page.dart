@@ -81,6 +81,7 @@ class _TaskPageState extends State<TaskPage> {
                         await FirebaseFirestore.instance.collection('tasks').add({
                           'task': task,
                           'isDone': false,
+                          'isTrashed': false,
                           'createdAt': Timestamp.now(),
                         });
 
@@ -100,8 +101,11 @@ class _TaskPageState extends State<TaskPage> {
   }
 
   void deleteTask(String id) {
-    FirebaseFirestore.instance.collection('tasks').doc(id).delete();
+    FirebaseFirestore.instance.collection('tasks').doc(id).update({
+      'isTrashed': true,
+    });
   }
+
 
   void updateTaskStatus(String id, bool isChecked) {
     FirebaseFirestore.instance.collection('tasks').doc(id).update({
@@ -138,6 +142,7 @@ class _TaskPageState extends State<TaskPage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('tasks')
+                  .where('isTrashed', isEqualTo: false)
                   .orderBy('createdAt', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {

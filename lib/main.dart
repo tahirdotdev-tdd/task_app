@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/providers/theme_provider.dart';
-import 'package:task_app/screens/home_page.dart';
 import 'package:task_app/screens/splash_screen.dart';
 import 'package:task_app/styles/themes.dart';
 import 'package:task_app/utils/internet_checker.dart';

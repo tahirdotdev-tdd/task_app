@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:task_app/screens/settings_page.dart';
 import 'package:task_app/screens/task_page.dart';
+import 'package:task_app/screens/trash_page.dart';
 import 'package:task_app/styles/text_styles.dart';
 import 'package:task_app/utils/internet_checker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -20,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = const [
     TaskPage(key: ValueKey('Tasks')),
     SettingsPage(key: ValueKey('Settings')),
+    TrashPage(key: ValueKey('Trash')),
   ];
 
   @override
@@ -86,6 +89,11 @@ class _HomePageState extends State<HomePage> {
             SalomonBottomBarItem(
               icon: const Icon(Icons.settings),
               title: Text("Settings", style: navText(context)),
+              selectedColor: Colors.grey,
+            ),
+            SalomonBottomBarItem(
+              icon:  Icon(CupertinoIcons.trash,),
+              title: Text("Trash", style: navText(context)),
               selectedColor: Colors.grey,
             ),
           ],
