@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final PageController _pageController;
   int _currentIndex = 0;
   bool _dialogShown = false;
 
@@ -28,7 +29,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     _checkInitialConnectivity();
+
     Connectivity().onConnectivityChanged.listen((result) {
       final hasConnection = result != ConnectivityResult.none;
       if (!hasConnection && !_dialogShown) {
@@ -38,6 +41,12 @@ class _HomePageState extends State<HomePage> {
         _dialogShown = false;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkInitialConnectivity() async {
@@ -65,7 +74,7 @@ class _HomePageState extends State<HomePage> {
               }
             },
             child: const Text('Retry'),
-          )
+          ),
         ],
       ),
     );
@@ -74,25 +83,41 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: _pages,
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: SalomonBottomBar(
           currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) {
+            setState(() => _currentIndex = index);
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+
           items: [
             SalomonBottomBarItem(
-              icon: const Icon(Icons.task_alt),
+              icon: const Icon(CupertinoIcons.checkmark_alt),
               title: Text("Tasks", style: navText(context)),
               selectedColor: Colors.grey,
             ),
             SalomonBottomBarItem(
-              icon: const Icon(Icons.settings),
+              icon: const Icon(CupertinoIcons.settings),
               title: Text("Settings", style: navText(context)),
               selectedColor: Colors.grey,
             ),
             SalomonBottomBarItem(
-              icon:  Icon(CupertinoIcons.trash,),
+              icon: Icon(CupertinoIcons.trash),
               title: Text("Trash", style: navText(context)),
               selectedColor: Colors.grey,
             ),

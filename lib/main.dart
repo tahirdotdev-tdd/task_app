@@ -12,7 +12,7 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
-      child: const InternetChecker( // ⬅️ Wrap your app here
+      child: const InternetChecker(
         child: MyApp(),
       ),
     ),
