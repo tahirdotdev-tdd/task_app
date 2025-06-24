@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_app/providers/theme_provider.dart';
 import 'package:task_app/screens/splash_screen.dart';
+import 'package:task_app/services/noti_service.dart';
 import 'package:task_app/styles/themes.dart';
 import 'package:task_app/utils/internet_checker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotiService().init();
   await Firebase.initializeApp();
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
-      child: const InternetChecker(
-        child: MyApp(),
-      ),
+      child: const InternetChecker(child: MyApp()),
     ),
   );
 }
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
       debugShowCheckedModeBanner: false,
-      home:  const SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

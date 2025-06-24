@@ -12,11 +12,12 @@ plugins {
 android {
     namespace = "com.tahirdotdev.taskApp.task_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled   = true
     }
 
     kotlinOptions {
@@ -51,6 +52,7 @@ dependencies {
 
     // ✅ Firestore - required for your task app
     implementation("com.google.firebase:firebase-firestore-ktx")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // Add other Firebase libraries here if needed:
     // implementation("com.google.firebase:firebase-auth")

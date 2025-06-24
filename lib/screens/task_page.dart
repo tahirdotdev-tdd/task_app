@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task_app/components/digital_flip_clock.dart';
 import 'package:task_app/components/my_tile.dart';
 
 import '../styles/text_styles.dart';
@@ -29,7 +31,10 @@ class _TaskPageState extends State<TaskPage> {
         return Dialog(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+            side: BorderSide(
+              width: 1,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            ),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
@@ -51,7 +56,9 @@ class _TaskPageState extends State<TaskPage> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.5),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -78,12 +85,14 @@ class _TaskPageState extends State<TaskPage> {
                         final task = _taskController.text.trim();
                         if (task.isEmpty) return;
 
-                        await FirebaseFirestore.instance.collection('tasks').add({
-                          'task': task,
-                          'isDone': false,
-                          'isTrashed': false,
-                          'createdAt': Timestamp.now(),
-                        });
+                        await FirebaseFirestore.instance
+                            .collection('tasks')
+                            .add({
+                              'task': task,
+                              'isDone': false,
+                              'isTrashed': false,
+                              'createdAt': Timestamp.now(),
+                            });
 
                         Navigator.pop(context);
                       },
@@ -95,17 +104,41 @@ class _TaskPageState extends State<TaskPage> {
             ),
           ),
         );
-
       },
     );
   }
+  void showUpdateDialog(String docId, String oldTitle) {
+    TextEditingController controller = TextEditingController(text: oldTitle);
 
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Edit Task"),
+        content: TextField(controller: controller),
+        actions: [
+          TextButton(
+            onPressed: () {
+              updateTaskInFirestore(docId, controller.text);
+              Navigator.pop(context);
+            },
+            child: Text("Update"),
+          )
+        ],
+      ),
+    );
+  }
+
+  void updateTaskInFirestore(String docId, String newTitle) async {
+    await FirebaseFirestore.instance.collection('tasks').doc(docId).update({
+      'task': newTitle,
+      'updatedAt': DateTime.now(),
+    });
+  }
   void deleteTask(String id) {
     FirebaseFirestore.instance.collection('tasks').doc(id).update({
       'isTrashed': true,
     });
   }
-
 
   void updateTaskStatus(String id, bool isChecked) {
     FirebaseFirestore.instance.collection('tasks').doc(id).update({
@@ -132,11 +165,12 @@ class _TaskPageState extends State<TaskPage> {
                   borderRadius: BorderRadius.circular(20),
                   side: BorderSide(width: 1, color: Colors.white38),
                 ),
-                child: Icon(Icons.add, color: Colors.white),
+                child: Icon(CupertinoIcons.add, color: Colors.white),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
+          DigitalFlipClock(),
           // Realtime Task List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
@@ -186,7 +220,7 @@ class _TaskPageState extends State<TaskPage> {
                       onCheckChanged: (value) =>
                           updateTaskStatus(doc.id, value ?? false),
                       onDelete: () => deleteTask(doc.id),
-                      createdAt: createdAt,
+                      createdAt: createdAt, onUpdate: () => showUpdateDialog(doc.id, taskText),
                     );
                   },
                 );

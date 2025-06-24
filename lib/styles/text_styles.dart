@@ -13,6 +13,12 @@ TextStyle secHead(BuildContext context) => GoogleFonts.poppins(
   color: Theme.of(context).textTheme.bodyMedium?.color,
 );
 
+TextStyle paraText(BuildContext context) => GoogleFonts.poppins(
+  fontSize: 13,
+  // fontWeight: FontWeight.w500,
+  color: Theme.of(context).textTheme.bodyMedium?.color,
+);
+
 TextStyle navText(BuildContext context) => GoogleFonts.poppins(
   fontSize: 13,
   fontWeight: FontWeight.w500,

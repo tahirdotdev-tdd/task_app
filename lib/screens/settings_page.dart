@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:task_app/components/digital_flip_clock.dart';
+import 'package:task_app/services/noti_service.dart';
 
 import '../providers/theme_provider.dart';
 import '../styles/text_styles.dart';
@@ -30,6 +32,8 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [Text("Settings", style: heading1(context))],
           ),
+
+          DigitalFlipClock(),
           const SizedBox(height: 30),
 
           // Dark Mode Toggle
@@ -100,39 +104,34 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text("Notifications", style: secHead(context)),
               trailing: CupertinoSwitch(
                 value: _notificationsEnabled,
-                onChanged: (bool value) {
+                onChanged: (bool value) async {
                   setState(() {
                     _notificationsEnabled = value;
                   });
 
-                  Future.delayed(const Duration(milliseconds: 250), () async {
-                    try {
-                      await Fluttertoast.cancel(); // Clear any previous toast
+                  if (value) {
+                    await NotiService().showNotification(
+                      id: 1,
+                      title: "TASK APP",
+                      body: "Task notifications enabled.",
+                    );
+                  } else {
+                    await NotiService().cancelAllNotifications();
+                  }
 
-                      Fluttertoast.showToast(
-                        msg: value
-                            ? "Notifications Enabled"
-                            : "Notifications Disabled",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black87,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                      );
-                    } catch (_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: Duration(microseconds: 950),
-                          content: Text(
-                            value
-                                ? "Notifications Enabled"
-                                : "Notifications Disabled",
-                          ),
-                        ),
-                      );
-                    }
-                  });
+                  Fluttertoast.cancel();
+                  Fluttertoast.showToast(
+                    msg: value
+                        ? "Notifications Enabled"
+                        : "Notifications Disabled",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.black87,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
                 },
+
                 activeTrackColor: Colors.grey,
               ),
             ),
