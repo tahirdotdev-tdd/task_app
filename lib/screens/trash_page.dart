@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:task_app/components/digital_flip_clock.dart';
 
 import '../components/trash_tile.dart';
-import '../styles/text_styles.dart'; // Import your tile
+import '../styles/text_styles.dart';
 
 class TrashPage extends StatelessWidget {
   const TrashPage({super.key});
@@ -20,11 +20,16 @@ class TrashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final topPadding = screenWidth * 0.2;
+    final sidePadding = screenWidth * 0.04;
+    final titleFontSize = screenWidth * 0.06;
+    final infoFontSize = screenWidth * 0.04;
+    final cardPadding = screenWidth * 0.02;
+
     return Scaffold(
-      // appBar: AppBar(title: const Text("Trash",style:TextStyle(color: Colors.white),)),
-      //
       body: Padding(
-        padding: const EdgeInsets.only(top: 80, left: 15, right: 15),
+        padding: EdgeInsets.only(top: topPadding, left: sidePadding, right: sidePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,18 +37,30 @@ class TrashPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Trash", style: heading1(context))],
+                Text("Trash", style: heading1(context).copyWith(fontSize: titleFontSize)),
+              ],
             ),
 
             DigitalFlipClock(),
-            const SizedBox(height: 20),
-            Text(
-              "Deleted tasks will appear here. You can restore or permanently delete them.",
-              style: paraText(context),
-              textAlign: TextAlign.left,
+            SizedBox(height: screenWidth * 0.05),
+
+            Container(
+              padding: EdgeInsets.all(cardPadding),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.black87),
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.blueGrey,
+              ),
+              child: Text(
+                "Deleted tasks will appear here. You can restore or permanently delete them.",
+                style: paraText(context).copyWith(fontSize: infoFontSize),
+                textAlign: TextAlign.center,
+              ),
             ),
 
-            // This Flexible avoids conflict with unbounded height
+            SizedBox(height: screenWidth * 0.05),
+
             Flexible(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -71,25 +88,14 @@ class TrashPage extends StatelessWidget {
                       final data = doc.data()! as Map<String, dynamic>;
                       final title = data['task'] ?? "No content";
                       final createdAt =
-                          (data['createdAt'] as Timestamp?)?.toDate() ??
-                          DateTime.now();
+                          (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
 
                       return TrashTile(
                         key: ValueKey(doc.id),
                         title: title,
                         createdAt: createdAt,
-                        onRestore: () {
-                          FirebaseFirestore.instance
-                              .collection('tasks')
-                              .doc(doc.id)
-                              .update({'isTrashed': false});
-                        },
-                        onPermanentDelete: () {
-                          FirebaseFirestore.instance
-                              .collection('tasks')
-                              .doc(doc.id)
-                              .delete();
-                        },
+                        onRestore: () => restoreTask(doc.id),
+                        onPermanentDelete: () => permanentlyDelete(doc.id),
                       );
                     },
                   );
@@ -102,7 +108,3 @@ class TrashPage extends StatelessWidget {
     );
   }
 }
-
-/*
-
- */

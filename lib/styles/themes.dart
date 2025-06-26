@@ -41,7 +41,7 @@ final ThemeData lightTheme = ThemeData(
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: whiteSwatch,
-  scaffoldBackgroundColor: Colors.black,
+  scaffoldBackgroundColor: Color.fromARGB(255, 27, 27, 27),
   appBarTheme: AppBarTheme(backgroundColor: Colors.white),
   textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
 );

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:task_app/screens/home_page.dart';
 
@@ -12,16 +11,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
   late AnimationController _textController;
   late Animation<double> _textAnimation;
 
   @override
   void initState() {
     super.initState();
+
     _textController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
     );
 
     _textAnimation = Tween<double>(
@@ -31,10 +30,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     _textController.forward();
 
-    Timer(Duration(seconds: 6), () {
-      Navigator.of(
-        context,
-      ).pushReplacement(FadePageRoute(builder: (context) => HomePage()));
+    Timer(const Duration(seconds: 6), () {
+      Navigator.of(context).pushReplacement(
+        FadePageRoute(builder: (context) => const HomePage()),
+      );
     });
   }
 
@@ -46,6 +45,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    double fontSize = screenWidth * 0.08; // ~30 on 375 width
+
     return Scaffold(
       backgroundColor: Colors.black87,
       body: Center(
@@ -55,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen>
             "Task App",
             style: TextStyle(
               color: Colors.white,
-              fontSize: 30,
+              fontSize: fontSize,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.bold,
             ),
@@ -70,21 +73,19 @@ class FadePageRoute extends PageRouteBuilder {
   final WidgetBuilder builder;
 
   FadePageRoute({required this.builder})
-    : super(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            builder(context),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.0, 1.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              builder(context),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
 
-          var tween = Tween(
-            begin: begin,
-            end: end,
-          ).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(tween);
+            final tween = Tween(begin: begin, end: end)
+                .chain(CurveTween(curve: curve));
+            final offsetAnimation = animation.drive(tween);
 
-          return SlideTransition(position: offsetAnimation, child: child);
-        },
-      );
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        );
 }

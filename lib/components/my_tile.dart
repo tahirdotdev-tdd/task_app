@@ -16,22 +16,29 @@ class MyTile extends StatelessWidget {
     required this.isChecked,
     required this.onCheckChanged,
     required this.onDelete,
-    required this.createdAt, required this.onUpdate,
+    required this.createdAt,
+    required this.onUpdate,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Use lazy formatting
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive values
+    double fontSize = screenWidth * 0.040; // ~16 on 400 width
+    double subtitleSize = screenWidth * 0.032; // ~12
+    double paddingH = screenWidth * 0.04; // horizontal padding
+    double iconSize = screenWidth * 0.055; // ~22 on 400 width
+    double marginV = screenWidth * 0.02;
+
     final String formattedDate = DateFormat.yMMMMd().format(createdAt);
 
     return Material(
       color: Colors.transparent,
       child: Container(
-        height: 130,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.symmetric(horizontal: paddingH, vertical: marginV),
         decoration: BoxDecoration(
-          // color: Colors.white38,
-          border: Border.all(color: Colors.grey, width: .5),
+          border: Border.all(color: Colors.grey, width: 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
@@ -40,9 +47,9 @@ class MyTile extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: paddingH,
+            vertical: screenWidth * 0.02,
           ),
           leading: Checkbox.adaptive(
             value: isChecked,
@@ -54,29 +61,40 @@ class MyTile extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: fontSize,
               fontWeight: FontWeight.w500,
               decoration: isChecked ? TextDecoration.lineThrough : null,
             ),
           ),
           subtitle: Text(
             "Added on $formattedDate",
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: subtitleSize,
+            ),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
                 onPressed: onUpdate,
-                icon: const Icon(CupertinoIcons.pencil, color: Colors.blue),
+                icon: Icon(
+                  CupertinoIcons.pencil,
+                  size: iconSize,
+                  color: Colors.blue,
+                ),
               ),
               IconButton(
                 onPressed: onDelete,
-                icon: const Icon(CupertinoIcons.delete, size: 20, color: Colors.redAccent),
+                icon: Icon(
+                  CupertinoIcons.delete,
+                  size: iconSize,
+                  color: Colors.redAccent,
+                ),
                 tooltip: 'Delete Task',
               ),
             ],
-          )
+          ),
         ),
       ),
     );

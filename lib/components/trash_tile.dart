@@ -18,13 +18,22 @@ class TrashTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive dimensions
+    double fontSize = screenWidth * 0.040; // ~16 on 400 width
+    double dateFontSize = screenWidth * 0.032; // ~12
+    double paddingAll = screenWidth * 0.03;
+    double iconSize = screenWidth * 0.05;
+    double spacing = screenWidth * 0.025;
+
     final formattedDate = DateFormat.yMMMMd().format(createdAt);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(horizontal: paddingAll, vertical: spacing),
+      padding: EdgeInsets.all(paddingAll),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: .5),
+        border: Border.all(color: Colors.grey, width: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -32,27 +41,33 @@ class TrashTile extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: spacing),
           Text(
             "Deleted on $formattedDate",
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: dateFontSize),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: spacing * 1.5),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton.icon(
                 onPressed: onRestore,
-                icon: Icon(CupertinoIcons.gobackward, color: Colors.green),
-                label: const Text("Restore"),
+                icon: Icon(CupertinoIcons.gobackward, color: Colors.green, size: iconSize),
+                label: Text(
+                  "Restore",
+                  style: TextStyle(fontSize: dateFontSize),
+                ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: spacing),
               TextButton.icon(
                 onPressed: onPermanentDelete,
-                icon: Icon(CupertinoIcons.delete_solid, color: Colors.red),
-                label: const Text("Delete"),
+                icon: Icon(CupertinoIcons.delete_solid, color: Colors.red, size: iconSize),
+                label: Text(
+                  "Delete",
+                  style: TextStyle(fontSize: dateFontSize),
+                ),
               ),
             ],
           ),

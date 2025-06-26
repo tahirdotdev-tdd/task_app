@@ -16,16 +16,21 @@ class _DigitalFlipClockState extends State<DigitalFlipClock> {
     super.initState();
     _timeStream = Stream.periodic(
       const Duration(seconds: 1),
-          (_) => DateTime.now(),
+      (_) => DateTime.now(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final digitFontSize = screenWidth * 0.06;
+    final colonFontSize = screenWidth * 0.06;
+    final amPmFontSize = screenWidth * 0.035;
+
     final theme = Theme.of(context);
     final textColor = theme.textTheme.bodyMedium?.color ?? Colors.grey;
     final colonColor = theme.primaryColor;
-    final amPmColor = theme.textTheme.bodyMedium?.color ?? Colors.grey;
+    final amPmColor = theme.textTheme.bodyMedium?.color ?? Colors.blue;
 
     return StreamBuilder<DateTime>(
       stream: _timeStream,
@@ -43,16 +48,16 @@ class _DigitalFlipClockState extends State<DigitalFlipClock> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _buildFlipUnit(hour, textColor),
-            _buildColon(colonColor),
-            _buildFlipUnit(minute, textColor),
-            _buildColon(colonColor),
-            _buildFlipUnit(second, textColor),
-            const SizedBox(width: 8),
+            _buildFlipUnit(hour, textColor, digitFontSize),
+            _buildColon(colonColor, colonFontSize),
+            _buildFlipUnit(minute, textColor, digitFontSize),
+            _buildColon(colonColor, colonFontSize),
+            _buildFlipUnit(second, textColor, digitFontSize),
+            SizedBox(width: screenWidth * 0.02),
             Text(
               amPm,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: amPmFontSize,
                 color: amPmColor,
                 fontWeight: FontWeight.bold,
               ),
@@ -63,27 +68,27 @@ class _DigitalFlipClockState extends State<DigitalFlipClock> {
     );
   }
 
-  Widget _buildFlipUnit(int value, Color color) {
+  Widget _buildFlipUnit(int value, Color color, double fontSize) {
     return AnimatedFlipCounter(
       value: value,
       duration: const Duration(milliseconds: 500),
       wholeDigits: 2,
       textStyle: TextStyle(
-        fontSize: 24,
+        fontSize: fontSize,
         fontWeight: FontWeight.bold,
         color: color,
       ),
     );
   }
 
-  Widget _buildColon(Color color) {
+  Widget _buildColon(Color color, double fontSize) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      padding: EdgeInsets.symmetric(horizontal: fontSize * 0.2),
       child: Text(
         ":",
         style: TextStyle(
-          fontSize: 24,
-          color: Colors.red,
+          fontSize: fontSize,
+          color: color,
           fontWeight: FontWeight.bold,
         ),
       ),

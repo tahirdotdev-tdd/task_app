@@ -22,19 +22,35 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive padding and sizes
+    double topPadding = screenWidth * 0.2; // ~80 on 400 width
+    double sidePadding = screenWidth * 0.04; // ~15
+    double tilePaddingV = screenWidth * 0.025; // ~10
+    double tilePaddingH = screenWidth * 0.05; // ~20
+    double spacing = screenWidth * 0.05; // ~20
+    double headingFontSize = screenWidth * 0.06; // ~24
+    double subHeadingFontSize = screenWidth * 0.045; // ~18
+
     return Padding(
-      padding: const EdgeInsets.only(top: 80, left: 15, right: 15),
+      padding: EdgeInsets.only(top: topPadding, left: sidePadding, right: sidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text("Settings", style: heading1(context))],
+            children: [
+              Text(
+                "Settings",
+                style: heading1(context).copyWith(fontSize: headingFontSize),
+              ),
+            ],
           ),
 
           DigitalFlipClock(),
-          const SizedBox(height: 30),
+          SizedBox(height: spacing * 1.5),
 
           // Dark Mode Toggle
           Container(
@@ -43,23 +59,27 @@ class _SettingsPageState extends State<SettingsPage> {
               border: Border.all(width: 1, color: Colors.grey),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: tilePaddingH,
+                vertical: tilePaddingV,
               ),
-              title: Text("Dark Mode", style: secHead(context)),
+              title: Text(
+                "Dark Mode",
+                style: secHead(context).copyWith(fontSize: subHeadingFontSize),
+              ),
               trailing: Consumer<ThemeProvider>(
                 builder: (context, themeProvider, child) {
                   return CupertinoSwitch(
                     value: themeProvider.isDarkMode,
                     onChanged: themeProvider.toggleTheme,
-                    activeTrackColor: Colors.grey,
+                    activeTrackColor: Colors.greenAccent,
+                    inactiveTrackColor: Colors.redAccent,
                   );
                 },
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: spacing),
 
           // Developer Link
           Container(
@@ -68,17 +88,20 @@ class _SettingsPageState extends State<SettingsPage> {
               border: Border.all(width: 1, color: Colors.grey),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: tilePaddingH,
+                vertical: tilePaddingV,
               ),
-              title: Text("Developers", style: secHead(context)),
+              title: Text(
+                "Developers",
+                style: secHead(context).copyWith(fontSize: subHeadingFontSize),
+              ),
               trailing: IconButton(
-                icon: const Icon(Icons.web_rounded),
+                icon: const Icon(CupertinoIcons.right_chevron),
                 onPressed: () async {
                   try {
                     await platform.invokeMethod('openBrowser', {
-                      'url': 'https://hmtahir.webflow.io/',
+                      'url': 'https://bit.ly/tahirhassan',
                     });
                   } on PlatformException catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -89,19 +112,23 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: spacing),
 
+          // Notification Toggle
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               border: Border.all(width: 1, color: Colors.grey),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: tilePaddingH,
+                vertical: tilePaddingV,
               ),
-              title: Text("Notifications", style: secHead(context)),
+              title: Text(
+                "Notifications",
+                style: secHead(context).copyWith(fontSize: subHeadingFontSize),
+              ),
               trailing: CupertinoSwitch(
                 value: _notificationsEnabled,
                 onChanged: (bool value) async {
@@ -121,9 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   Fluttertoast.cancel();
                   Fluttertoast.showToast(
-                    msg: value
-                        ? "Notifications Enabled"
-                        : "Notifications Disabled",
+                    msg: value ? "Notifications Enabled" : "Notifications Disabled",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black87,
@@ -131,8 +156,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     fontSize: 16.0,
                   );
                 },
-
-                activeTrackColor: Colors.grey,
+                activeTrackColor: Colors.greenAccent,
+                inactiveTrackColor: Colors.redAccent,
               ),
             ),
           ),

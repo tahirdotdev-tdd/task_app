@@ -15,7 +15,7 @@ TextStyle secHead(BuildContext context) => GoogleFonts.poppins(
 
 TextStyle paraText(BuildContext context) => GoogleFonts.poppins(
   fontSize: 13,
-  // fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
   color: Theme.of(context).textTheme.bodyMedium?.color,
 );
 

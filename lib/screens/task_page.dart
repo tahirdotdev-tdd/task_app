@@ -25,6 +25,10 @@ class _TaskPageState extends State<TaskPage> {
 
   void addTaskDialog() {
     _taskController.clear();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth * 0.045;
+    final padding = screenWidth * 0.05;
+
     showDialog(
       context: context,
       builder: (context) {
@@ -38,27 +42,25 @@ class _TaskPageState extends State<TaskPage> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(padding),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("New Task", style: secHead(context)),
-                  const SizedBox(height: 15),
+                  Text("New Task", style: secHead(context).copyWith(fontSize: fontSize)),
+                  SizedBox(height: padding * 0.75),
                   TextField(
                     controller: _taskController,
                     maxLines: 3,
                     style: Theme.of(context).textTheme.bodyMedium,
                     decoration: InputDecoration(
                       labelText: "Task Details",
-                      labelStyle: secHead(context),
+                      labelStyle: secHead(context).copyWith(fontSize: fontSize * 0.9),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -70,7 +72,7 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: padding),
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
@@ -85,18 +87,16 @@ class _TaskPageState extends State<TaskPage> {
                         final task = _taskController.text.trim();
                         if (task.isEmpty) return;
 
-                        await FirebaseFirestore.instance
-                            .collection('tasks')
-                            .add({
-                              'task': task,
-                              'isDone': false,
-                              'isTrashed': false,
-                              'createdAt': Timestamp.now(),
-                            });
+                        await FirebaseFirestore.instance.collection('tasks').add({
+                          'task': task,
+                          'isDone': false,
+                          'isTrashed': false,
+                          'createdAt': Timestamp.now(),
+                        });
 
                         Navigator.pop(context);
                       },
-                      child: Text("Add", style: secHead(context)),
+                      child: Text("Add", style: secHead(context).copyWith(fontSize: fontSize)),
                     ),
                   ),
                 ],
@@ -107,21 +107,27 @@ class _TaskPageState extends State<TaskPage> {
       },
     );
   }
+
   void showUpdateDialog(String docId, String oldTitle) {
     TextEditingController controller = TextEditingController(text: oldTitle);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth * 0.045;
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Edit Task"),
-        content: TextField(controller: controller),
+        title: Text("Edit Task", style: TextStyle(fontSize: fontSize)),
+        content: TextField(
+          controller: controller,
+          style: TextStyle(fontSize: fontSize),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               updateTaskInFirestore(docId, controller.text);
               Navigator.pop(context);
             },
-            child: Text("Update"),
+            child: Text("Update", style: TextStyle(fontSize: fontSize)),
           )
         ],
       ),
@@ -134,6 +140,7 @@ class _TaskPageState extends State<TaskPage> {
       'updatedAt': DateTime.now(),
     });
   }
+
   void deleteTask(String id) {
     FirebaseFirestore.instance.collection('tasks').doc(id).update({
       'isTrashed': true,
@@ -148,8 +155,13 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final topPadding = screenWidth * 0.2;
+    final sidePadding = screenWidth * 0.04;
+    final titleFontSize = screenWidth * 0.06;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 80, left: 15, right: 15),
+      padding: EdgeInsets.only(top: topPadding, left: sidePadding, right: sidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,19 +169,18 @@ class _TaskPageState extends State<TaskPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Tasks", style: heading1(context)),
+              Text("Tasks", style: heading1(context).copyWith(fontSize: titleFontSize)),
               FloatingActionButton(
                 onPressed: addTaskDialog,
                 backgroundColor: Colors.black87,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(width: 1, color: Colors.white38),
+                  side: const BorderSide(width: 1, color: Colors.white38),
                 ),
-                child: Icon(CupertinoIcons.add, color: Colors.white),
+                child: Icon(CupertinoIcons.add, color: Colors.white, size: screenWidth * 0.06),
               ),
             ],
           ),
-          // const SizedBox(height: 10),
           DigitalFlipClock(),
           // Realtime Task List
           Expanded(
@@ -195,7 +206,7 @@ class _TaskPageState extends State<TaskPage> {
                     child: Text(
                       "No tasks yet.",
                       style: GoogleFonts.poppins(
-                        fontSize: 18,
+                        fontSize: screenWidth * 0.045,
                         color: Colors.grey,
                       ),
                     ),
@@ -212,15 +223,13 @@ class _TaskPageState extends State<TaskPage> {
                     final createdAt = (data['createdAt'] as Timestamp).toDate();
 
                     return MyTile(
-                      key: ValueKey(
-                        doc.id,
-                      ), // 🔑 helps Flutter track widget identity
+                      key: ValueKey(doc.id),
                       title: taskText,
                       isChecked: isDone,
-                      onCheckChanged: (value) =>
-                          updateTaskStatus(doc.id, value ?? false),
+                      onCheckChanged: (value) => updateTaskStatus(doc.id, value ?? false),
                       onDelete: () => deleteTask(doc.id),
-                      createdAt: createdAt, onUpdate: () => showUpdateDialog(doc.id, taskText),
+                      createdAt: createdAt,
+                      onUpdate: () => showUpdateDialog(doc.id, taskText),
                     );
                   },
                 );

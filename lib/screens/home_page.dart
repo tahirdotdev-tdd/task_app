@@ -4,7 +4,6 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:task_app/screens/settings_page.dart';
 import 'package:task_app/screens/task_page.dart';
 import 'package:task_app/screens/trash_page.dart';
-import 'package:task_app/styles/text_styles.dart';
 import 'package:task_app/utils/internet_checker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -82,6 +81,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive metrics
+    double bottomBarHeight = screenWidth * 0.26; // ~104 on 400 width
+    double iconSize = screenWidth * 0.055; // ~22 on 400 width
+    double marginH = screenWidth * 0.125; // ~50 on 400 width
+    double paddingH = screenWidth * 0.04; // ~16 on 400 width
+
     return Scaffold(
       body: Stack(
         children: [
@@ -100,13 +107,18 @@ class _HomePageState extends State<HomePage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.only(bottom: screenWidth * 0.05), // ~20
                 child: Container(
-                  height: 116,
-                  margin: const EdgeInsets.symmetric(horizontal: 50),
+                  height: bottomBarHeight,
+                  margin: EdgeInsets.symmetric(horizontal: marginH),
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1.5, color: Colors.grey.withOpacity(0.5)),
-                    color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.95),
+                    border: Border.all(
+                      width: 1.5,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
+                    color: Theme.of(context)
+                        .scaffoldBackgroundColor
+                        .withOpacity(0.95),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: const [
                       BoxShadow(
@@ -116,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: paddingH),
                   child: SalomonBottomBar(
                     backgroundColor: Colors.transparent,
                     currentIndex: _currentIndex,
@@ -129,38 +141,34 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     itemShape: const StadiumBorder(),
-                    itemPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0), // reduce vertical padding
+                    itemPadding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.03,
+                      vertical: screenWidth * 0.015,
+                    ),
                     items: [
                       SalomonBottomBarItem(
-                        icon: const Center(
-                          child: Icon(CupertinoIcons.checkmark_alt, size: 22),
-                        ),
+                        icon: Icon(CupertinoIcons.checkmark_alt,
+                            size: iconSize),
                         title: const SizedBox.shrink(),
                         selectedColor: Colors.grey,
                       ),
                       SalomonBottomBarItem(
-                        icon: const Center(
-                          child: Icon(CupertinoIcons.settings, size: 22),
-                        ),
+                        icon:
+                            Icon(CupertinoIcons.settings, size: iconSize),
                         title: const SizedBox.shrink(),
                         selectedColor: Colors.grey,
                       ),
                       SalomonBottomBarItem(
-                        icon: const Center(
-                          child: Icon(CupertinoIcons.trash, size: 22),
-                        ),
+                        icon: Icon(CupertinoIcons.trash, size: iconSize),
                         title: const SizedBox.shrink(),
                         selectedColor: Colors.grey,
                       ),
                     ],
                   ),
                 ),
-
-
               ),
             ),
           )
-
         ],
       ),
     );
