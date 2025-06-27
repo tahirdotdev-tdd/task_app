@@ -88,7 +88,7 @@ class _DigitalFlipClockState extends State<DigitalFlipClock> {
         ":",
         style: TextStyle(
           fontSize: fontSize,
-          color: color,
+          color: Colors.red,
           fontWeight: FontWeight.bold,
         ),
       ),
