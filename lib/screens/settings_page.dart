@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +23,28 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _notificationsEnabled = false;
 
   @override
+  void initState() {
+    super.initState();
+    loadNotificationSetting();
+  }
+
+  Future<void> loadNotificationSetting() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+    if (doc.exists) {
+      final settings = doc.data()?['settings'];
+      if (settings != null && settings['notificationsEnabled'] != null) {
+        setState(() {
+          _notificationsEnabled = settings['notificationsEnabled'];
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -34,7 +58,11 @@ class _SettingsPageState extends State<SettingsPage> {
     double subHeadingFontSize = screenWidth * 0.045; // ~18
 
     return Padding(
-      padding: EdgeInsets.only(top: topPadding, left: sidePadding, right: sidePadding),
+      padding: EdgeInsets.only(
+        top: topPadding,
+        left: sidePadding,
+        right: sidePadding,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -136,6 +164,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     _notificationsEnabled = value;
                   });
 
+                  final uid = FirebaseAuth.instance.currentUser!.uid;
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(uid)
+                      .set({
+                        'settings': {'notificationsEnabled': value},
+                      }, SetOptions(merge: true));
+
                   if (value) {
                     await NotiService().showNotification(
                       id: 1,
@@ -148,7 +184,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   Fluttertoast.cancel();
                   Fluttertoast.showToast(
-                    msg: value ? "Notifications Enabled" : "Notifications Disabled",
+                    msg: value
+                        ? "Notifications Enabled"
+                        : "Notifications Disabled",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     backgroundColor: Colors.black87,
@@ -156,6 +194,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     fontSize: 16.0,
                   );
                 },
+
                 activeTrackColor: Colors.greenAccent,
                 inactiveTrackColor: Colors.redAccent,
               ),

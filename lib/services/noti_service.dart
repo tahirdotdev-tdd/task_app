@@ -28,7 +28,7 @@ class NotiService {
     );
 
     await notificationPlugin.initialize(initializationSettings);
-    _isInitialized = true; // ✅ Fix applied
+    _isInitialized = true; 
   }
 
   Future<void> showNotification({

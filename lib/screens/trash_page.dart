@@ -1,21 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:task_app/components/digital_flip_clock.dart';
-
 import '../components/trash_tile.dart';
 import '../styles/text_styles.dart';
 
 class TrashPage extends StatelessWidget {
   const TrashPage({super.key});
 
+  // Get current user's UID
+  String get uid => FirebaseAuth.instance.currentUser!.uid;
+
   void restoreTask(String id) {
-    FirebaseFirestore.instance.collection('tasks').doc(id).update({
-      'isTrashed': false,
-    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('tasks')
+        .doc(id)
+        .update({'isTrashed': false});
   }
 
   void permanentlyDelete(String id) {
-    FirebaseFirestore.instance.collection('tasks').doc(id).delete();
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('tasks')
+        .doc(id)
+        .delete();
   }
 
   @override
@@ -29,7 +40,11 @@ class TrashPage extends StatelessWidget {
 
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top: topPadding, left: sidePadding, right: sidePadding),
+        padding: EdgeInsets.only(
+          top: topPadding,
+          left: sidePadding,
+          right: sidePadding,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,7 +52,10 @@ class TrashPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Trash", style: heading1(context).copyWith(fontSize: titleFontSize)),
+                Text(
+                  "Trash",
+                  style: heading1(context).copyWith(fontSize: titleFontSize),
+                ),
               ],
             ),
 
@@ -64,6 +82,8 @@ class TrashPage extends StatelessWidget {
             Flexible(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
                     .collection('tasks')
                     .where('isTrashed', isEqualTo: true)
                     .orderBy('createdAt', descending: true)
@@ -88,7 +108,8 @@ class TrashPage extends StatelessWidget {
                       final data = doc.data()! as Map<String, dynamic>;
                       final title = data['task'] ?? "No content";
                       final createdAt =
-                          (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+                          (data['createdAt'] as Timestamp?)?.toDate() ??
+                          DateTime.now();
 
                       return TrashTile(
                         key: ValueKey(doc.id),

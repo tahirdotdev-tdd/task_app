@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Create a custom MaterialColor for black
 const MaterialColor blackSwatch = MaterialColor(0xFF000000, <int, Color>{
   50: Color(0xFF000000),
   100: Color(0xFF000000),
@@ -14,7 +13,6 @@ const MaterialColor blackSwatch = MaterialColor(0xFF000000, <int, Color>{
   900: Color(0xFF000000),
 });
 
-// Create a custom MaterialColor for white
 const MaterialColor whiteSwatch = MaterialColor(0xFFFFFFFF, <int, Color>{
   50: Color(0xFFFFFFFF),
   100: Color(0xFFFFFFFF),
@@ -28,7 +26,6 @@ const MaterialColor whiteSwatch = MaterialColor(0xFFFFFFFF, <int, Color>{
   900: Color(0xFFFFFFFF),
 });
 
-// Light theme using black accents
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primarySwatch: blackSwatch,
@@ -37,7 +34,6 @@ final ThemeData lightTheme = ThemeData(
   textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.black)),
 );
 
-// Dark theme using white accents
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: whiteSwatch,

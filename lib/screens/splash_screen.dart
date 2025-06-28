@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    double fontSize = screenWidth * 0.08; // ~30 on 375 width
+    double fontSize = screenWidth * 0.08; 
 
     return Scaffold(
       backgroundColor: Colors.black87,

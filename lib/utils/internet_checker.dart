@@ -15,7 +15,7 @@ class InternetChecker extends StatefulWidget {
 }
 
 class _InternetCheckerState extends State<InternetChecker> {
-  bool _isConnected = true;
+ bool _isConnected = true;
   bool _dialogShown = false;
 
   @override
