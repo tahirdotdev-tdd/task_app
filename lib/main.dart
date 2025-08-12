@@ -15,7 +15,6 @@ void main() async {
   NotiService().init();
   await Firebase.initializeApp();
   await FirebaseAuth.instance.signInAnonymously();
-
   final prefs = await SharedPreferences.getInstance();
   final seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
 
