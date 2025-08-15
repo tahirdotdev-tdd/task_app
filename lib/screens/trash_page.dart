@@ -67,7 +67,7 @@ class TrashPage extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(width: 1, color: Colors.black87),
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(10),
                 color: Colors.blueGrey,
               ),
               child: Text(
